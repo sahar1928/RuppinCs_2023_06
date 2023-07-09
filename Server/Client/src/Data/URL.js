@@ -1,0 +1,1 @@
+export const URL = `https://proj.ruppin.ac.il/cgroup6/test2/tar6/api/`
