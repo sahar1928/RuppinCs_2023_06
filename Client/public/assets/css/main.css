@@ -7550,6 +7550,14 @@ blog sidebar area
   border-radius: 3px;
   border: 1px solid #f1f1f1;
 }
+.jm-candidate-d-btn button{
+  display: block;
+  text-align: center;
+  height: 50px;
+  line-height: 50px;
+  border-radius: 3px;
+  border: 1px solid #f1f1f1;
+}
 
 .jm-candidate-profile-buttons .jm-candidate-d-btn i {
   display: inline-block;

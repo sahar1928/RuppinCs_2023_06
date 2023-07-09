@@ -83,7 +83,7 @@ const SignIn = () => {
       }
 
       if (userDetails.User.UserType === "Candidate") {
-        navigate("/HomePage2");
+        navigate("/homePage2");
       } else if (userDetails.User.UserType === "Company") {
         navigate("/");
       } else {

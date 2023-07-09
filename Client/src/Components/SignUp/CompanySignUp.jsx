@@ -28,7 +28,7 @@ const CompanySignUpForm = () => {
   
       const allowedTypes = ["application/pdf", "application/msword", "image/jpeg", "image/png"];
       if (!allowedTypes.includes(file.type)) {
-        throw new Error("Invalid file type. Please upload a DOC, PDF, JPG, or PNG file.");
+        throw new Error("Invalid file type. Please upload a DOC, PDF, JPG, Text or PNG file.");
       }
   
       const maxSize = 2 * 1024 * 1024; // 2 MB

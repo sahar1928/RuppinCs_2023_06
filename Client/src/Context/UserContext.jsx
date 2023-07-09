@@ -1,12 +1,15 @@
 import React, { createContext, useEffect, useState } from 'react';
 import CryptoJS from "crypto-js";
 
+
 const UserContext = createContext();
 
 const UserContextProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+
+
 
   useEffect(() => {
 
@@ -26,7 +29,17 @@ const UserContextProvider = ({ children }) => {
       ).toString(CryptoJS.enc.Utf8);
       setRememberMe(JSON.parse(decryptedRememberMe));
     }
-  }, []);
+    else if (!isLoggedIn && !rememberMe && 
+      (!(window.location.href == "http://127.0.0.1:5173/" || window.location.href =="http://127.0.0.1:5173/homePage2") &&
+      !(window.location.href == "https://proj.ruppin.ac.il/cgroup6/test2/build" || window.location.href =="https://proj.ruppin.ac.il/cgroup6/test2/build/homePage2"))
+      ) {
+       const timeout = setTimeout(() => {
+           window.location.replace('/homePage2');
+    }, 1000);
+    }
+
+    
+  }, [rememberMe, isLoggedIn]);
 
   const decryptUserDetails = (encryptedData) => {
     const bytes = CryptoJS.AES.decrypt(encryptedData, "ahyakar1928");

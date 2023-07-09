@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { JobContext } from "../../Context/JobContext";
-import { skills } from "../../Data/JobsData";
+import { skills, professionalTitles } from "../../Data/JobsData";
 import AccordionSection from "../Jobs/AccordionSection";
 import CompanyLocation from "../Location/CompanyLocation";
 
@@ -9,46 +9,18 @@ const SingleCandidateDetails = () => {
   const { candidate } = useContext(JobContext);
   console.log(candidate);
   const [currentCandidate, setCurrentCandidate] = useState(null);
-  const [base64Photo, setBase64Photo] = useState(null);
-  const [mimeType, setMimeType] = useState(null);
   const navigate = useNavigate();
 
-  const fetchPhotoData = async (photo) => {
-    if (photo) {
-      const base64String = photo;
-      const byteCharacters = atob(base64String);
-      const byteArray = new Uint8Array(byteCharacters.length);
-
-      for (let i = 0; i < byteCharacters.length; i++) {
-        byteArray[i] = byteCharacters.charCodeAt(i);
-      }
-
-      const mimeTypeFunc = determineMimeType(byteArray);
-      setMimeType(mimeTypeFunc);
-      const base64 = btoa(String.fromCharCode(...byteArray));
-      setBase64Photo(base64);
-    }
-  };
-
-  const determineMimeType = (byteArray) => {
-    const signature = byteArray
-      .slice(0, 4)
-      .map((byte) => byte.toString(16))
-      .join("")
-      .toUpperCase();
-    if (signature === "89504E47") {
-      return "image/png";
-    } else if (signature === "FFD8FFDB" || signature === "FFD8FFE0") {
-      return "image/jpeg";
-    } else {
-      return "image/jpeg";
-    }
+  const resumeTypeMapping = {
+    0: "HTML",
+    1: "Text",
+    2: "Docx",
+    3: "PDF",
   };
 
   useEffect(() => {
     const fetchCandidate = async () => {
       setCurrentCandidate(candidate);
-      await fetchPhotoData(candidate.PhotoFile);
     };
     fetchCandidate();
   }, [candidate]);
@@ -61,22 +33,45 @@ const SingleCandidateDetails = () => {
     navigate(-1);
   };
 
+  // const resumeType = 
+  // (currentCandidate.Resume.ResumeCategory >= 0 && resumeTypeMapping[currentCandidate.Resume.ResumeCategory] <= 4)
+  //  ?  (resumeTypeMapping[currentCandidate.Resume.ResumeCategory])
+  // : currentCandidate.Resume.ResumeCategory;
+
+  // const resumeMIMETypeMapping = {
+  //   "HTML": "data:text/html",
+  //   "Text": "data:text/plain",
+  //   "Docx": "data:application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  //   "PDF": "data:application/pdf",
+  // };
+
+  // const resumeFileExtMapping = {
+  //   "HTML": ".html",
+  //   "Text": ".txt",
+  //   "Docx": ".docx",
+  //   "PDF": ".pdf",
+  // };
+
+  // const resumeMIMEType = resumeMIMETypeMapping[resumeType];
+  // const resumeFileExtension = resumeFileExtMapping[resumeType];
+
   return (
-    <div className="container">
-      <button className="back-button" onClick={handleGoBack}>
+      <div className="jm-candidate-wrap pt-100 pb-60" >
+
+    <div className="container" style={{borderColor:"black", borderStyle:"double"}}>
+      <button className="back-button" onClick={handleGoBack} style={{marginTop:"10px"}}>
         X
       </button>
-      <div className="jm-candidate-wrap pt-100 pb-60">
-        <div className="row">
-          <div className="col-xl-8 col-lg-8">
-            <div className="jm-candidate-content-wrapp">
+      <div className="row">
+      <div className="text-center">
+      <div className="col-lg-12">
+        <div className="jm-candidate-author-wrapper mr-25 mb-40">
+          <div className="jm-candidate-avater-portion">
               <img
                 src={`data:image/jpeg;base64,${currentCandidate.Resume.PhotoFile}`}
                 alt="Candidate Image"
                 className="user-photo"
               />
-              <div className="jm-candidate-content-title-wrapper mb-35">
-                <div className="jm-candidate-content-title-text-wrapp">
                   <div className="jm-candidate-content-title-text">
                     <div className="jm-candidate-content-title-img">
                     </div>
@@ -86,7 +81,7 @@ const SingleCandidateDetails = () => {
                       </h4>
                       <span className="jm-candidate-content-title-meta">
                         <i className="fa-thin fa-user"></i>{" "}
-                        {currentCandidate.ProfessionalTitle}
+                        {professionalTitles[currentCandidate.ProfessionalTitle]}
                       </span>
                     </div>
                   </div>
@@ -137,20 +132,11 @@ const SingleCandidateDetails = () => {
                     </>
                   ))}
                 </div>
-              </div>
-              <div className="jm-candidate-content-bottom-info-wrapper mb-25">
-                <div className="jm-candidate-content-bottom-info-single">
-                  <label>Location :</label>
-                  <span>{currentCandidate.Resume.Location}</span>
                 </div>
-                <div className="jm-candidate-content-bottom-info-single">
-                  <label>Email :</label>
-                  <span>{currentCandidate.EmailUrl}</span>
                 </div>
-              </div>
+
               <div className="jm-candidate-content-informations-wrapper ">
                 <div className="row align-items-center mb-15">
-                  <div className="col-xl-7 col-lg-7 col-md-7">
                     <div className="jm-candidate-content-info-skill-meta text-center text-md-start mb-15">
                       <ul className="jm-candidate-skill-list">
                         {currentCandidate.SkillAndExperience &&
@@ -165,32 +151,10 @@ const SingleCandidateDetails = () => {
                       </ul>
                     </div>
                   </div>
-                  <div className="col-xl-5 col-lg-5 col-md-5">
-                  <div className="jm-candidate-social-wrapper">
-                  <Link to="#">
-                    <i className="fa-regular fa-envelope"></i>
-                  </Link>
-                  {currentCandidate.SocialMedia.FacebookURL}
-                  <Link to="#">
-                    <i className="fa-brands fa-twitter"></i>
-                  </Link>
-                  {currentCandidate.SocialMedia.TwitterURL}
-                  <Link to="#">
-                    <i className="fa-brands fa-linkedin-in"></i>
-                  </Link>
-                  {currentCandidate.SocialMedia.LinkedinURL}
-                  <Link to="#">
-                    <i className="fa-light fa-phone-flip"></i>
-                  </Link>
                 </div>
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
-          <row>
-          <div className="col-xl-4 col-lg-4">
-            <div className="jm-candidate-sidebar ml-40">
+
+           <div className="jm-candidate-sidebar ml-40">
               <div className="jm-candidate-sidebar-widget mb-40">
                 <div className="jm-candidate-sidebar-inner">
                   <h3 className="jm-candidate-sidebar-widget-title">
@@ -233,19 +197,103 @@ const SingleCandidateDetails = () => {
                       {currentCandidate.PhoneNumber}
                     </li>
                   </ul>
+    
                   <div className="jm-candidate-sidebar-overview-buttons">
-                    <Link
-                      to="/postJobPage"
-                      className="jm-candidate-overview-btn"
-                    >
-                      Contact <i className="fa-thin fa-envelope"></i>
-                    </Link>
-                    <Link
-                      to="#"
-                      className="jm-candidate-overview-btn candidate-bookmark"
-                    >
-                      <i className="fa-thin fa-bookmark"></i> Add Bookmark
-                    </Link>
+                  <div className="jm-candidate-profile-buttons mt-25">
+                  {resumeTypeMapping[currentCandidate.Resume.ResumeCategory] == "Docx" ||
+                  currentCandidate.Resume.ResumeCategory === "Docx" ? (
+                    <>
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          window.open(
+                            `data:application/vnd.openxmlformats-officedocument.wordprocessingml.document;base64,${currentCandidate.Resume.ResumeFile}`,
+                            "_blank"
+                          );
+                        }}
+                        className="jm-candidate-d-btn" style={{marginLeft:"42%"}}
+                      >
+                        <i className="fa-thin fa-eye"></i>View CV
+                      </button>
+                      <a
+                        href={`data:application/vnd.openxmlformats-officedocument.wordprocessingml.document;base64,${currentCandidate.Resume.ResumeFile}`}
+                        download={`${currentCandidate.Resume.FullName}_Resume.docx`}
+                        className="jm-candidate-d-btn" style={{marginLeft:"42%"}}
+                      >
+                        <i className="fa-thin fa-download"></i>Download CV
+                      </a>
+                    </>
+                  ) : resumeTypeMapping[currentCandidate.Resume.ResumeCategory] == "PDF" ||
+                  currentCandidate.Resume.ResumeCategory === "PDF" ? (
+                    <>
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          window.open(
+                            `data:application/pdf;base64,${currentCandidate.Resume.ResumeFile}`,
+                            "_blank"
+                          );
+                        }}
+                        className="jm-candidate-d-btn" style={{marginLeft:"42%"}}
+                      >
+                        <i className="fa-thin fa-eye"></i>View CV
+                      </button>
+                      <a
+                        href={`data:application/pdf;base64,${currentCandidate.Resume.ResumeFile}`}
+                        download={`${currentCandidate.Resume.FullName}_Resume.pdf`}
+                        className="jm-candidate-d-btn"
+                      >
+                        <i className="fa-thin fa-download"></i>Download CV
+                      </a>
+                    </>
+                  ) : resumeTypeMapping[currentCandidate.Resume.ResumeCategory] == "HTML" ||
+                  currentCandidate.Resume.ResumeCategory === "HTML" ? (
+                    <>
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          window.open(
+                            `data:text/html;base64,${currentCandidate.Resume.ResumeFile}`,
+                            "_blank"
+                          );
+                        }}
+                        className="jm-candidate-d-btn" style={{marginLeft:"42%"}}
+                      >
+                        <i className="fa-thin fa-eye"></i>View CV
+                      </button>
+                      <a
+                        href={`data:text/html;base64,${currentCandidate.Resume.ResumeFile}`}
+                        download={`${currentCandidate.Resume.FullName}_Resume.html`}
+                        className="jm-candidate-d-btn"
+                      >
+                        <i className="fa-thin fa-download"></i>Download CV
+                      </a>
+                    </>
+                  ) : resumeTypeMapping[currentCandidate.Resume.ResumeCategory] == "Text" ||
+                  currentCandidate.Resume.ResumeCategory === "Text" ? (
+                    <>
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          window.open(
+                            `data:text/plain;base64,${currentCandidate.Resume.ResumeFile}`,
+                            "_blank"
+                          );
+                        }}
+                        className="jm-candidate-d-btn" style={{marginLeft:"42%"}}
+                      >
+                        <i className="fa-thin fa-eye"></i>View CV 
+                      </button>
+                      <a
+                        href={`data:text/plain;base64,${currentCandidate.Resume.ResumeFile}`}
+                        download={`${currentCandidate.Resume.FullName}_Resume.txt`}
+                        className="jm-candidate-d-btn"
+                      >
+                        <i className="fa-thin fa-download"></i>Download CV
+                      </a>
+                    </>
+                  ) : null}
+                </div>
                   </div>
                   <div className="jm-candidate-content-education">
                 <div className="jm-candidate-content-education-item">
@@ -260,7 +308,7 @@ const SingleCandidateDetails = () => {
                       <span className="jm-candidate-experience-date">
                         {experience.StartDate} - {experience.EndDate}
                       </span>
-                      <h5 className="jm-candidate-content-inner-sm-title">
+                      <h5 className="jm-candidate-content-sm-title">
                         {experience.JobTitle}
                       </h5>
                       <p>{experience.EmployerName}</p>
@@ -280,7 +328,7 @@ const SingleCandidateDetails = () => {
                       <span className="jm-candidate-experience-date">
                         {education.StartDate} - {education.EndDate}
                       </span>
-                      <h5 className="jm-candidate-content-inner-sm-title">
+                      <h5 className="jm-candidate-content-sm-title">
                         {education.Qualification}
                       </h5>
                       <p>{education.InstitutionName}</p>
@@ -302,14 +350,14 @@ const SingleCandidateDetails = () => {
               </div>
             </div>
           </div>
-          </row>
-        </div>  
-        <button className="back-button" onClick={handleGoBack}>
-          Go Back
-        </button>
-      </div>
+        <div>
+        <button className="back-button" onClick={handleGoBack} style={{marginBottom:"10px"}}>
+        Go Back
+      </button>
     </div>
     </div>
+    </div>
+  </div>
   );
 };
 

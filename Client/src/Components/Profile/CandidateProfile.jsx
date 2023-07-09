@@ -1,73 +1,43 @@
-import React, {useState,useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import {skills,professionalTitles} from "../../Data/JobsData"
 
 const CandidateProfile = ({ user }) => {
-    
-  const [base64Photo, setBase64Photo] = useState(null);
-  const [mimeType, setMimeType] = useState(null);
-    const {
-      FirstName,
-      LastName,
-      Resume,
-      SkillAndExperience,
-      ProfessionalTitle,
-      Gender,
-    } = user;
-
-    const {
-      FullName,
-      PhotoFile,
-      Experiences,
-      Educations,
-      ResumeFile
-    } = Resume;
-    console.log( user);
+  const resumeText = atob(user.Resume.ResumeFile);
 
 
-  
-    const fetchPhotoData = async (logo) => {
-      if (logo) {
-        const base64String = logo;
-        const byteCharacters = atob(base64String);
-        const byteArray = new Uint8Array(byteCharacters.length);
-  
-        for (let i = 0; i < byteCharacters.length; i++) {
-          byteArray[i] = byteCharacters.charCodeAt(i);
-        }
-  
-        const mimeTypeFunc = determineMimeType(byteArray);
-        setMimeType(mimeTypeFunc);
-        const base64 = btoa(String.fromCharCode(...byteArray));
-        setBase64Photo(base64);
-      }
-    };
+  const resumeTypeMapping = {
+    0: "HTML",
+    1: "Text",
+    2: "Docx",
+    3: "PDF",
+  };
 
-    useEffect(() => {
-      const fetchJob = async () => {
-        await fetchPhotoData(Resume.PhotoFile);
-  
-      };
-      fetchJob();
-    }, [base64Photo]);
-  
-    if (!base64Photo) {
-      return setBase64Photo("<div>Loading...</div>");
-    }
-  
-    const determineMimeType = (byteArray) => {
-      const signature = byteArray
-        .slice(0, 4)
-        .map((byte) => byte.toString(16))
-        .join("")
-        .toUpperCase();
-      if (signature === "89504E47") {
-        return "image/png";
-      } else if (signature === "FFD8FFDB" || signature === "FFD8FFE0") {
-        return "image/jpeg";
-      } else {
-        return "image/jpeg";
-      }
-    };
+  const {
+    FirstName,
+    LastName,
+    Resume,
+    SkillAndExperience,
+    ProfessionalTitle,
+    Gender,
+  } = user;
+
+  const {
+    FullName,
+    PhotoFile,
+    Experiences,
+    Educations,
+    ResumeFile,
+    ResumeCategory,
+  } = Resume;
+  console.log(user);
+
+
+  if (!Resume.PhotoFile) {
+    return setBase64Photo("<div>Loading...</div>");
+  }
+
+
 
   return (
     <div className="jm-candidate-area pt-100 pb-60">
@@ -76,16 +46,14 @@ const CandidateProfile = ({ user }) => {
           <div className="col-lg-4 order-1 order-lg-0">
             <div className="jm-candidate-author-wrapper mr-25 mb-40">
               <div className="jm-candidate-avater-portion">
-              {base64Photo && (
-                <img
-                  src={`data:${mimeType};base64,${base64Photo}`}
-                  alt="Company Image"
-                  className="user-photo"
-                />
-              )}
+ {Resume.PhotoFile && <img
+                src={`data:image/jpeg;base64,${Resume.PhotoFile}`}
+                alt="Candidate Image"
+                className="user-photo"
+              />}
                 <h4 className="jm-candidate-avater-name">{FullName}</h4>
                 <span className="jm-candidate-designation">
-                  {ProfessionalTitle}
+                  {professionalTitles[ProfessionalTitle]}
                 </span>
                 <div className="jm-candidate-favour-rating">
                   <span className="jm-candidate-rating">
@@ -99,20 +67,29 @@ const CandidateProfile = ({ user }) => {
                     <i className="fa-thin fa-heart"></i>
                   </Link>
                 </div>
-                <div className="jm-candidate-social-wrapper">
+                <div className="row">
+
+                  <div className="jm-candidate-social-wrapper">
                   <Link to="#">
                     <i className="fa-regular fa-envelope"></i>
                   </Link>
+                  {user.SocialMedia.FacebookURL}
                   <Link to="#">
                     <i className="fa-brands fa-twitter"></i>
                   </Link>
+                  {user.SocialMedia.TwitterURL}
+                  <div className="row">
                   <Link to="#">
                     <i className="fa-brands fa-linkedin-in"></i>
                   </Link>
+                  {user.SocialMedia.LinkedinURL}
                   <Link to="#">
                     <i className="fa-light fa-phone-flip"></i>
                   </Link>
+                  {user.PhoneNumber}
                 </div>
+                </div>
+                  </div>
               </div>
               <div className="jm-proffessional-skills-portion">
                 <h4 className="jm-candidate-profile-overview-title">
@@ -121,10 +98,12 @@ const CandidateProfile = ({ user }) => {
                 <div className="jm-candidate-professional-skills-meta">
                   {SkillAndExperience.map((item) => (
                     <>
-                    <Link to="#" key={item.id}>
-                      {item.Skill}
-                      <i className="fa-light fa-skills">{item.Years} Years Experience</i>
-                    </Link>        
+                      <Link to="#" key={item.id}>
+                       <i>{skills[item.Skill].name}  </i> 
+                        <i className="fa-light fa-skills">
+                          {item.Years} Years Experience
+                        </i>
+                      </Link>
                     </>
                   ))}
                 </div>
@@ -133,11 +112,46 @@ const CandidateProfile = ({ user }) => {
                 <h4 className="jm-candidate-profile-overview-title">
                   Profile Overview
                 </h4>
+                <ul className="jm-candidate-sidebar-review-list mb-15">
+                    <li>
+                      <i className="fa-thin fa-user-circle"></i>{" "}
+                      <span className="jm-candidate-review-label">
+                        First Name :
+                      </span>{" "}
+                      {user.FirstName}
+                    </li>
+                    <li>
+                      <i className="fa-thin fa-user-circle"></i>{" "}
+                      <span className="jm-candidate-review-label">
+                        Last Name :
+                      </span>{" "}
+                      {user.LastName}
+                    </li>
+                    <li>
+                      <i className="fa-thin fa-envelope"></i>{" "}
+                      <span className="jm-candidate-review-label">Email :</span>{" "}
+                      {user.EmailUrl}
+                    </li>
+                    <li>
+                      <i className="fa-thin fa-map-marker"></i>{" "}
+                      <span className="jm-candidate-review-label">
+                        Location :
+                      </span>
+                      {user.Resume.Location}
+                    </li>
+                    <li>
+                      <i className="fa-thin fa-phone"></i>{" "}
+                      <span className="jm-candidate-review-label">
+                        Phone Number :
+                      </span>
+                      {user.PhoneNumber}
+                    </li>
+                  </ul>
                 <ul className="jm-job-sidebar-review-list mb-15">
                   <li>
                     <i className="fa-thin fa-house-blank"></i>{" "}
                     <span className="jm-job-review-label">Title : </span>{" "}
-                    {ProfessionalTitle}
+                    {professionalTitles[ProfessionalTitle]}
                   </li>
                   <li>
                     <i className="fa-light fa-transgender"></i>{" "}
@@ -146,12 +160,99 @@ const CandidateProfile = ({ user }) => {
                   </li>
                 </ul>
                 <div className="jm-candidate-profile-buttons mt-25">
-                  <Link to="#" className="jm-candidate-d-btn">
-                    <i className="fa-thin fa-phone"></i>Hire Me
-                  </Link>
-                  <Link to="#" className="jm-candidate-d-btn">
-                    <i className="fa-thin fa-download"></i>Download CV
-                  </Link>
+                  {resumeTypeMapping[Resume.ResumeCategory] == "Docx" ||
+                  Resume.ResumeCategory === "Docx" ? (
+                    <>
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          window.open(
+                            `data:application/vnd.openxmlformats-officedocument.wordprocessingml.document;base64,${Resume.ResumeFile}`,
+                            "_blank"
+                          );
+                        }}
+                        className="jm-candidate-d-btn" style={{width:"350px"}}
+                      >
+                        <i className="fa-thin fa-eye"></i>View CV
+                      </button>
+                      <a
+                        href={`data:application/vnd.openxmlformats-officedocument.wordprocessingml.document;base64,${Resume.ResumeFile}`}
+                        download={`${FullName}_Resume.docx`}
+                        className="jm-candidate-d-btn"
+                      >
+                        <i className="fa-thin fa-download"></i>Download CV
+                      </a>
+                    </>
+                  ) : resumeTypeMapping[Resume.ResumeCategory] == "PDF" ||
+                    Resume.ResumeCategory === "PDF" ? (
+                    <>
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          window.open(
+                            `data:application/pdf;base64,${Resume.ResumeFile}`,
+                            "_blank"
+                          );
+                        }}
+                        className="jm-candidate-d-btn" style={{width:"350px"}}
+                      >
+                        <i className="fa-thin fa-eye"></i>View CV
+                      </button>
+                      <a
+                        href={`data:application/pdf;base64,${Resume.ResumeFile}`}
+                        download={`${FullName}_Resume.pdf`}
+                        className="jm-candidate-d-btn"
+                      >
+                        <i className="fa-thin fa-download"></i>Download CV
+                      </a>
+                    </>
+                  ) : resumeTypeMapping[Resume.ResumeCategory] == "HTML" ||
+                    Resume.ResumeCategory === "HTML" ? (
+                    <>
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          window.open(
+                            `data:text/html;base64,${Resume.ResumeFile}`,
+                            "_blank"
+                          );
+                        }}
+                        className="jm-candidate-d-btn" style={{width:"350px"}}
+                      >
+                        <i className="fa-thin fa-eye"></i>View CV
+                      </button>
+                      <a
+                        href={`data:text/html;base64,${Resume.ResumeFile}`}
+                        download={`${FullName}_Resume.html`}
+                        className="jm-candidate-d-btn"
+                      >
+                        <i className="fa-thin fa-download"></i>Download CV
+                      </a>
+                    </>
+                  ) : resumeTypeMapping[Resume.ResumeCategory] == "Text" ||
+                    Resume.ResumeCategory === "Text" ? (
+                    <>
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          window.open(
+                            `data:text/plain;base64,${Resume.ResumeFile}`,
+                            "_blank"
+                          );
+                        }}
+                        className="jm-candidate-d-btn" style={{width:"350px"}}
+                      >
+                        <i className="fa-thin fa-eye"></i>View CV 
+                      </button>
+                      <a
+                        href={`data:text/plain;base64,${Resume.ResumeFile}`}
+                        download={`${FullName}_Resume.txt`}
+                        className="jm-candidate-d-btn"
+                      >
+                        <i className="fa-thin fa-download"></i>Download CV
+                      </a>
+                    </>
+                  ) : null}
                 </div>
               </div>
             </div>
@@ -170,14 +271,15 @@ const CandidateProfile = ({ user }) => {
                     <div
                       className="jm-candidate-content-education-inner"
                       key={index}
-                    >
-                      <span className="jm-candidate-experience-date">
-                        {experience.StartDate} - {experience.EndDate}
-                      </span>
+                    >                 
                       <h5 className="jm-candidate-content-inner-sm-title">
                         {experience.JobTitle}
                       </h5>
-                      <p>{experience.EmployerName}</p>
+                       <p>Company Name: <i>{experience.EmployerName}</i></p>
+                      <span className="jm-candidate-experience-date">
+                        {experience.StartDate} - {experience.EndDate}
+                      </span>
+   
                     </div>
                   ))}
                 </div>
@@ -191,13 +293,13 @@ const CandidateProfile = ({ user }) => {
                       className="jm-candidate-content-education-inner"
                       key={index}
                     >
-                      <span className="jm-candidate-experience-date">
-                        {education.StartDate} - {education.EndDate}
-                      </span>
                       <h5 className="jm-candidate-content-inner-sm-title">
                         {education.Qualification}
                       </h5>
-                      <p>{education.InstitutionName}</p>
+                      <p>Institution Name:  <i>{education.InstitutionName}</i></p>
+                      <span className="jm-candidate-experience-date">
+                        {education.StartDate} - {education.EndDate}
+                      </span>
                     </div>
                   ))}
                 </div>

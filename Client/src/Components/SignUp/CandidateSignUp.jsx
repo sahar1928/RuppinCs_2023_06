@@ -415,7 +415,9 @@ const CandidateSignUp = () => {
               >
                 <option>Resume Category</option>
                 <option value="HTML">HTML</option>
-                <option value="TEXT">TEXT</option>
+                <option value="Text">Text</option>
+                <option value="Docx">Docx</option>
+                <option value="PDF">PDF</option>
               </select>
             </div>
             <div className="col-xl-6 col-md-6">

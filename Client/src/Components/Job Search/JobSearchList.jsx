@@ -8,7 +8,7 @@ const JobSearchList = () => {
   const { setCandidate } = useContext(JobContext);
   const [candidates, setCandidates] = useState([]);
   const navigate = useNavigate();
-  const [base64Photos, setBase64Photos] = useState([]);
+
 
   useEffect(() => {
     const fetchCandidatesFromDatabase = async () => {
@@ -26,42 +26,8 @@ const JobSearchList = () => {
     fetchCandidatesFromDatabase();
   }, []);
 
-  useEffect(() => {
-    const fetchPhotos = async () => {
-      const base64PhotosArray = await Promise.allSettled(
-        candidates.map(async (candidate) => {
-          const base64String = await fetchPhotoData(candidate.Resume.PhotoFile);
-          return base64String;
-        })
-      );
-      setBase64Photos(
-        base64PhotosArray.map((result) =>
-          result.status === "fulfilled" ? result.value : null
-        )
-      );
-    };
 
-    fetchPhotos();
-  }, [candidates]);
-
-  const fetchPhotoData = async (logo) => {
-    if (logo) {
-      try {
-        const base64String = logo;
-        const byteArray = new Uint8Array(base64String.length);
-        for (let i = 0; i < base64String.length; i++) {
-          byteArray[i] = base64String.charCodeAt(i);
-        }
-        return base64String;
-      } catch (error) {
-        console.error(error);
-      }
-    }
-
-    return null;
-  };
-
-  const handleJobClick = (candidate) => {
+  const handleCandidateClick = (candidate) => {
     setCandidate(candidate);
     navigate("/singleCandidate");
   };
@@ -75,7 +41,7 @@ const JobSearchList = () => {
               <div className="jm-latest-job-layout-3-info">
                 <div className="jm-latest-job-item-logo-3 y_img"></div>
                 <div className="jm-latest-job-layout-3-img">
-                  {base64Photos[index] ? (
+                  {candidate.Resume.PhotoFile ? (
                     <img
                       style={{
                         width: "100%",
@@ -83,9 +49,9 @@ const JobSearchList = () => {
                         backgroundColor: "white",
                         borderRadius: "50%",
                       }}
-                      src={`data:image/jpeg;base64,${base64Photos[index]}`}
+                      src={`data:image/jpeg;base64,${candidate.Resume.PhotoFile}`}
                       alt="img"
-                      onClick={() => handleJobClick(candidate)}
+                      onClick={() => handleCandidateClick(candidate)}
                     />
                   ) : (
                     <div className="placeholder-image">No profile Picture </div>
@@ -124,7 +90,7 @@ const JobSearchList = () => {
               </div>
               <button
                 to="#"
-                onClick={() => handleJobClick(candidate)}
+                onClick={() => handleCandidateClick(candidate)}
                 className="jm-latest-job-layout-3-btn"
               >
                 View Profile
