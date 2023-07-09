@@ -26,23 +26,19 @@ const CompanySignUpForm = () => {
     try {
       const file = event.target.files[0];
   
-      // File type validation
       const allowedTypes = ["application/pdf", "application/msword", "image/jpeg", "image/png"];
       if (!allowedTypes.includes(file.type)) {
         throw new Error("Invalid file type. Please upload a DOC, PDF, JPG, or PNG file.");
       }
   
-      // File size validation
       const maxSize = 2 * 1024 * 1024; // 2 MB
       if (file.size > maxSize) {
         throw new Error("File size exceeds the maximum limit of 2 MB.");
       }
   
-      // File is valid, update the state and check if all required fields are filled
       setLogoFile(file);
       
     } catch (error) {
-      // Handle the validation error
       toast.error(error.message);
     }
   };

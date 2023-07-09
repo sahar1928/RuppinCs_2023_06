@@ -144,7 +144,6 @@ const CandidateProfile = ({ user }) => {
                     <span className="jm-job-review-label">Gender : </span>{" "}
                     {Gender}
                   </li>
-                  {/* Add other relevant fields here */}
                 </ul>
                 <div className="jm-candidate-profile-buttons mt-25">
                   <Link to="#" className="jm-candidate-d-btn">
@@ -161,7 +160,6 @@ const CandidateProfile = ({ user }) => {
             <div className="jm-candidate-content-wrapper mb-40">
               <div className="jm-candidate-content-about mb-30">
                 <h4 className="jm-candidate-content-inner-title">About Me</h4>
-                <p>{/* Add about information here */}</p>
               </div>
               <div className="jm-candidate-content-education">
                 <div className="jm-candidate-content-education-item">

@@ -162,7 +162,7 @@ const CandidateSignUp = () => {
 
           if (response.ok) {
             toast.success("Candidate account created successfully");
-            // Reset the form
+
             setUsername("");
             setPassword("");
             setConfirmPassword("");

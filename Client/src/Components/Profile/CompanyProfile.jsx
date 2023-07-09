@@ -100,7 +100,6 @@ const CompanyProfile = ({ user }) => {
     } else if (signature === "FFD8FFDB" || signature === "FFD8FFE0") {
       return "image/jpeg";
     } else {
-      // Default to JPEG if the signature doesn't match PNG or JPEG
       return "image/jpeg";
     }
   };

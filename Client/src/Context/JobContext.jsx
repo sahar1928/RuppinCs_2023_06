@@ -10,7 +10,6 @@ const JobContextProvider = ({ children }) => {
   const [job, setJob] = useState(null);
   const [candidate, setCandidate] = useState(null);
 
-  // Search Form
   const [isFormOpen, setIsFormOpen] = useState(false);
 
   const handleOpenForm = () => {
@@ -20,7 +19,7 @@ const JobContextProvider = ({ children }) => {
   const handleCloseForm = () => {
     setIsFormOpen(false);
   };
-  // SidePanel
+
   const [sidePanelOpen, setSidePanelOpen] = useState(false);
 
   const handleOpen = () => {
@@ -31,7 +30,7 @@ const JobContextProvider = ({ children }) => {
     setSidePanelOpen(false);
   };
   
-  // Sticky Navbar
+
   const [isSticky, setIsSticky] = useState(false);
 
   useEffect(() => {
@@ -41,7 +40,7 @@ const JobContextProvider = ({ children }) => {
       clearTimeout(timeoutId);
       timeoutId = setTimeout(() => {
         setIsSticky(window.scrollY > 0);
-      }, 200); // Delay of 200 milliseconds
+      }, 200); 
     };
 
     window.addEventListener('scroll', handleScroll);
@@ -51,7 +50,6 @@ const JobContextProvider = ({ children }) => {
       clearTimeout(timeoutId);
     };
   }, []);
-// Jobs Filter
 const [filteredJobs, setFilteredJobs] = useState(jobs);
 
   const filterJobsByTime = (selectedTimes) => {
@@ -69,17 +67,17 @@ const [filteredJobs, setFilteredJobs] = useState(jobs);
     let updatedTimes = [...selectedTimes];
 
     if (checked) {
-      // Add the selected time to the array
+
       updatedTimes.push(value);
     } else {
-      // Remove the selected time from the array
+
       updatedTimes = updatedTimes.filter((time) => time !== value);
     }
 
     setSelectedTimes(updatedTimes);
     filterJobsByTime(updatedTimes);
   };
-  // Modal 
+
   const [showModal, setShowModal] = useState(false);
 
   const handleCloseModal = () => {
@@ -89,7 +87,6 @@ const [filteredJobs, setFilteredJobs] = useState(jobs);
   const handleOpenModal = () => {
     setShowModal(true);
   };
-  //Employer Filter
   const [selectedJobType, setSelectedJobType] = useState('');
 
   const handleJobTypeChange = (event) => {

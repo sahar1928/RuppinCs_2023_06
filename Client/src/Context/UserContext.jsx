@@ -1,4 +1,5 @@
 import React, { createContext, useEffect, useState } from 'react';
+import CryptoJS from "crypto-js";
 
 const UserContext = createContext();
 
@@ -7,19 +8,31 @@ const UserContextProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
 
-  // useEffect(() => {
-  //   const storedUser = localStorage.getItem('user');
-  //   const storedRememberMe = localStorage.getItem('rememberMe');
+  useEffect(() => {
 
-  //   if (storedUser) {
-  //     setUser(JSON.parse(storedUser));
-  //     setIsLoggedIn(true);
-  //   }
+    const encryptedUserDetails = localStorage.getItem("user");
+    const encryptedRememberMe = localStorage.getItem("rememberMe");
 
-  //   if (storedRememberMe) {
-  //     setRememberMe(JSON.parse(storedRememberMe));
-  //   }
-  // }, []);
+    if (encryptedUserDetails) {
+      const decryptedUserDetails = decryptUserDetails(encryptedUserDetails);
+      setUser(decryptedUserDetails);
+      setIsLoggedIn(true);
+    }
+
+    if (encryptedRememberMe) {
+      const decryptedRememberMe = CryptoJS.AES.decrypt(
+        encryptedRememberMe,
+        "ahyakar1928"
+      ).toString(CryptoJS.enc.Utf8);
+      setRememberMe(JSON.parse(decryptedRememberMe));
+    }
+  }, []);
+
+  const decryptUserDetails = (encryptedData) => {
+    const bytes = CryptoJS.AES.decrypt(encryptedData, "ahyakar1928");
+    const decryptedData = bytes.toString(CryptoJS.enc.Utf8);
+    return JSON.parse(decryptedData);
+  };
 
   return (
     <UserContext.Provider

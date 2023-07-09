@@ -15,7 +15,7 @@ const Profile = () => {
       <main>
         {isCandidate && <CandidateProfile user={user} />}
         {isCompany && <CompanyProfile user={user} />}
-        <Link to="/edit-profile">Edit Profile</Link> {/* Add link to edit profile page */}
+        <Link to="/edit-profile">Edit Profile</Link> 
       </main>
     );
   };

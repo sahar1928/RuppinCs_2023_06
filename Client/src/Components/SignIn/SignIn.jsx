@@ -27,25 +27,6 @@ const SignIn = () => {
     2: "Other",
   };
 
-  useEffect(() => {
-    // Check if user details are stored in localStorage
-    const encryptedUserDetails = localStorage.getItem("user");
-    const encryptedRememberMe = localStorage.getItem("rememberMe");
-
-    if (encryptedUserDetails) {
-      const decryptedUserDetails = decryptUserDetails(encryptedUserDetails);
-      setUser(decryptedUserDetails);
-      setIsLoggedIn(true);
-    }
-
-    if (encryptedRememberMe) {
-      const decryptedRememberMe = CryptoJS.AES.decrypt(
-        encryptedRememberMe,
-        "ahyakar1928"
-      ).toString(CryptoJS.enc.Utf8);
-      setRememberMe(JSON.parse(decryptedRememberMe));
-    }
-  }, []);
 
   const handleUsernameChange = (e) => {
     setUsername(e.target.value);
@@ -61,7 +42,7 @@ const SignIn = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // Perform form validation
+
     if (!username || !password) {
       toast.error("Please fill all the required fields");
       return;
@@ -85,7 +66,7 @@ const SignIn = () => {
       console.log(userDetails);
 
       if (remember) {
-        // Encrypt the user details and remember me option
+
         const encryptedRememberMe = CryptoJS.AES.encrypt(
           JSON.stringify(remember),
           "ahyakar1928"
@@ -94,9 +75,9 @@ const SignIn = () => {
 
         localStorage.setItem("user", encryptedUserDetails);
         localStorage.setItem("rememberMe", encryptedRememberMe);
-        console.log(encryptedUserDetails)
+
       } else {
-        // Clear the remember me option and user details
+
         localStorage.removeItem("user");
         localStorage.removeItem("rememberMe");
       }
