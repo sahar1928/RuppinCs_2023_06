@@ -7,19 +7,19 @@ const UserContextProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
 
-  // useEffect(() => {
-  //   const storedUser = localStorage.getItem('user');
-  //   const storedRememberMe = localStorage.getItem('rememberMe');
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    const storedRememberMe = localStorage.getItem('rememberMe');
 
-  //   if (storedUser) {
-  //     setUser(JSON.parse(storedUser));
-  //     setIsLoggedIn(true);
-  //   }
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+      setIsLoggedIn(true);
+    }
 
-  //   if (storedRememberMe) {
-  //     setRememberMe(JSON.parse(storedRememberMe));
-  //   }
-  // }, []);
+    if (storedRememberMe) {
+      setRememberMe(JSON.parse(storedRememberMe));
+    }
+  }, []);
 
   return (
     <UserContext.Provider

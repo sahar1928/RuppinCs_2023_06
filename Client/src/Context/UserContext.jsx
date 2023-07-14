@@ -31,7 +31,8 @@ const UserContextProvider = ({ children }) => {
     }
     else if (!isLoggedIn && !rememberMe && 
       (!(window.location.href == "http://127.0.0.1:5173/" || window.location.href =="http://127.0.0.1:5173/homePage2") &&
-      !(window.location.href == "https://proj.ruppin.ac.il/cgroup6/test2/build" || window.location.href =="https://proj.ruppin.ac.il/cgroup6/test2/build/homePage2"))
+      !(window.location.href == "http://localhost:5173/" || window.location.href =="http://localhost:5173/homePage2") &&
+      (!(window.location.href == "https://proj.ruppin.ac.il/cgroup6/test2/build" || window.location.href =="https://proj.ruppin.ac.il/cgroup6/test2/build/homePage2")))
       ) {
        const timeout = setTimeout(() => {
            window.location.replace('/homePage2');
